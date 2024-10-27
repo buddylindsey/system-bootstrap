@@ -66,6 +66,7 @@ fi
 
 if [[ $os == 'ubuntu' ]]; then
     echo "Installing for ubuntu"
+    sudo apt-get update
     if [[ $env == 'cli' ]]; then
         echo "... CLI Tools"
         # System
@@ -87,6 +88,8 @@ if [[ $os == 'ubuntu' ]]; then
         ./$os/nvim.sh
         ./$os/onefetch.sh
         ./$os/yt_dlp.sh
+        ./$os/docker.sh
+        ./$os/awscli.sh
     fi
     if [[ $env == 'gui' ]]; then
         # GUI
@@ -101,5 +104,6 @@ if [[ $os == 'ubuntu' ]]; then
         ./$os/obs.sh
         ./$os/steam.sh
         ./$os/gimp.sh
+        ./$os/dbgate.sh
     fi
 fi
