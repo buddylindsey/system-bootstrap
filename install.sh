@@ -90,6 +90,7 @@ if [[ $os == 'ubuntu' ]]; then
         ./$os/yt_dlp.sh
         ./$os/docker.sh
         ./$os/awscli.sh
+        ./$os/imagemagick.sh
     fi
     if [[ $env == 'gui' ]]; then
         # GUI
@@ -99,11 +100,14 @@ if [[ $os == 'ubuntu' ]]; then
         ./$os/meslo.sh
         ./$os/brave.sh
         ./$os/freecad.sh
-        ./$os/mvp.sh
+        ./$os/mpv.sh
         ./$os/kdenlive.sh
         ./$os/obs.sh
         ./$os/steam.sh
         ./$os/gimp.sh
         ./$os/dbgate.sh
+        ./$os/meslo.sh
+        ./$os/minimodem.sh
+        ./$os/telegram.sh
     fi
 fi
