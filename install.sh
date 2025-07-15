@@ -72,6 +72,7 @@ if [[ $os == 'ubuntu' ]]; then
         # System
         ./$os/tailscale.sh
         ./$os/nfs.sh
+        ./$os/ssh.sh
 
         # CLI
         ./$os/ohmyzsh.sh
@@ -90,6 +91,7 @@ if [[ $os == 'ubuntu' ]]; then
         ./$os/yt_dlp.sh
         ./$os/docker.sh
         ./$os/awscli.sh
+        ./$os/kubectl.sh
     fi
     if [[ $env == 'gui' ]]; then
         # GUI
