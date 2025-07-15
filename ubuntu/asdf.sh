@@ -1,23 +1,32 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-source "$SCRIPT_DIR/../utils.sh"
+VERBOSE="${VERBOSE:-no}"
 
-check_command_installed "asdf"
-if [ $? -eq 0 ]; then
-    exit 0
+pushd /tmp
+
+REPO='asdf-vm/asdf'
+APP_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
+ARCHIVE_FILE="asdf-$APP_VERSION-linux-386.tar.gz"
+DOWNLOAD_ARCHIVE="asdf-$APP_VERSION-linux-386.tar.gz"
+APP_DIR='/usr/local/bin'
+EXTRACT_LOCATION='asdf'
+
+if [[ $VERBOSE == "yes" ]]; then
+    echo "REPO: $REPO"
+    echo "VERSION: $APP_VERSION"
 fi
 
-sudo apt install -y curl git build-essential libssl-dev libffi-dev liblzma-dev
-ASDF_VERSION=$(curl -s "https://api.github.com/repos/asdf-vm/asdf/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v$ASDF_VERSION
+curl -sLo $ARCHIVE_FILE https://github.com/$REPO/releases/download/$APP_VERSION/$DOWNLOAD_ARCHIVE
+tar -xzvf $ARCHIVE_FILE
+sudo install $EXTRACT_LOCATION $APP_DIR 
+popd
 
-export ASDF_DIR=$HOME/.asdf
-source "$ASDF_DIR/asdf.sh"
-~/.asdf/bin/asdf plugin add python
-~/.asdf/bin/asdf install python latest
-~/.asdf/bin/asdf global python latest
-~/.asdf/bin/asdf plugin add nodejs 
-~/.asdf/bin/asdf install nodejs latest
-~/.asdf/bin/asdf global nodejs latest
+
+# export ASDF_DIR=$HOME/.asdf
+# source "$ASDF_DIR/asdf.sh"
+# ~/.asdf/bin/asdf plugin add python
+# ~/.asdf/bin/asdf install python latest
+# ~/.asdf/bin/asdf global python latest
+# ~/.asdf/bin/asdf plugin add nodejs 
+# ~/.asdf/bin/asdf install nodejs latest
+# ~/.asdf/bin/asdf global nodejs latest
