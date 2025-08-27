@@ -1,14 +1,16 @@
 #!/bin/bash
 
 VERBOSE="${VERBOSE:-no}"
+
 pushd /tmp
 
-REPO='asdf-vm/asdf'
+REPO='balena-io/etcher'
 APP_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
-ARCHIVE_FILE="asdf-$APP_VERSION-linux-386.tar.gz"
-DOWNLOAD_ARCHIVE="asdf-$APP_VERSION-linux-386.tar.gz"
+ARCHIVE_FILE='balenaEtcher.AppImage'
+version=${APP_VERSION#v}
+DOWNLOAD_ARCHIVE="balenaEtcher-$version-x64.AppImage"
 APP_DIR='/usr/local/bin'
-EXTRACT_LOCATION='asdf'
+EXTRACT_LOCATION=''
 
 if [[ $VERBOSE == "yes" ]]; then
     echo "REPO: $REPO"
@@ -17,16 +19,7 @@ if [[ $VERBOSE == "yes" ]]; then
 fi
 
 curl -sLo $ARCHIVE_FILE https://github.com/$REPO/releases/download/$APP_VERSION/$DOWNLOAD_ARCHIVE
-tar -xzvf $ARCHIVE_FILE
-
-sudo install $EXTRACT_LOCATION $APP_DIR
+chmod +x $ARCHIVE_FILE
+sudo install $ARCHIVE_FILE $APP_DIR 
 popd
 
-asdf plugin add python
-asdf install python latest
-asdf global python latest
-asdf plugin add nodejs
-asdf install nodejs latest
-asdf global nodejs latest
-asdf plugin add golang
-asdf install golang latest
