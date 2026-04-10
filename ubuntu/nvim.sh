@@ -11,9 +11,10 @@ if prepare_install "$MODE_PRESENT" "nvim" "Neovim"; then
     sudo apt-get install -y neovim
 fi
 
-if [ ! -d "$HOME/.config/nvim/.git" ]; then
-    rm -rf "$HOME/.config/nvim"
+if [ ! -e "$HOME/.config/nvim" ]; then
     git clone git@github.com:buddylindsey/vim.git "$HOME/.config/nvim"
-else
+elif [ -d "$HOME/.config/nvim/.git" ]; then
     log_step "Neovim config already present; skipping clone"
+else
+    log_step "Neovim config exists and is not a git clone; leaving it untouched"
 fi
