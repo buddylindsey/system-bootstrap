@@ -1,24 +1,31 @@
 #!/bin/bash
 
-if apt list --installed 2>/dev/null | grep -q "^openssh-server/"; then
-    echo "Package openssh-server is installed."
-else
-    sudo apt install -y openssh-server
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/../utils.sh"
+
+if ! apt_package_installed "openssh-server"; then
+    log_step "Installing openssh-server"
+    sudo apt-get install -y openssh-server
     sudo systemctl status sshd.service
+else
+    log_step "openssh-server already installed"
 fi
 
-if apt list --installed 2>/dev/null | grep -q "^openssh-client/"; then
-    echo "Package openssh-server is installed."
+if ! apt_package_installed "openssh-client"; then
+    log_step "Installing openssh-client"
+    sudo apt-get install -y openssh-client
 else
-    sudo apt install -y openssh-server
-    sudo systemctl status sshd.service
+    log_step "openssh-client already installed"
 fi
 
-
-if [ ! -f ~/.ssh/config ]; then
-    echo "SSH Config is not there"
-    touch ~/.ssh/config
-    echo "Host home" > ~/.ssh/config
-    echo "    HostName 192.168.1.1" >> ~/.ssh/config
-    echo "    User buddy" >> ~/.ssh/config
+mkdir -p "$HOME/.ssh"
+if [ ! -f "$HOME/.ssh/config" ]; then
+    log_step "Creating SSH config"
+    {
+        echo "Host home"
+        echo "    HostName 192.168.1.1"
+        echo "    User buddy"
+    } > "$HOME/.ssh/config"
 fi

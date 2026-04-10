@@ -1,17 +1,19 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "nvim"
-if [ $? -eq 0 ]; then
-    exit 0
+if prepare_install "$MODE_PRESENT" "nvim" "Neovim"; then
+    sudo apt-get install -y software-properties-common git
+    sudo add-apt-repository ppa:neovim-ppa/unstable -y
+    sudo apt-get install -y neovim
 fi
 
-sudo apt-get install -y software-properties-common git
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt-get install -y neovim
-
-mkdir -p ~/.config/nvim
-git clone git@github.com:buddylindsey/vim.git ~/.config/nvim/
+if [ ! -d "$HOME/.config/nvim/.git" ]; then
+    rm -rf "$HOME/.config/nvim"
+    git clone git@github.com:buddylindsey/vim.git "$HOME/.config/nvim"
+else
+    log_step "Neovim config already present; skipping clone"
+fi

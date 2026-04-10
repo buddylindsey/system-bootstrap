@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "aws"
-if [ $? -eq 0 ]; then
-    exit 0
-fi
+prepare_install "$MODE_LATEST" "aws" "AWS CLI"
 
-check_command_installed "asdf"
-if [ $? -eq 1 ]; then
-    echo "asdf-vm is not installed"
+if ! command_exists asdf; then
+    echo "asdf-vm is not installed" >&2
     exit 1
 fi
 
-asdf plugin add awscli
+if ! asdf plugin list | grep -qx "awscli"; then
+    asdf plugin add awscli
+fi
+
 asdf install awscli latest
 asdf global awscli latest

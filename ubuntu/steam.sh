@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "steam"
-if [ $? -eq 0 ]; then
+if ! prepare_install "$MODE_PRESENT" "steam" "Steam"; then
     exit 0
 fi
 
-pushd /tmp
+pushd /tmp >/dev/null
 
-sudo apt install -y wget
-wget https://cdn.akamai.steamstatic.com/client/installer/steam.deb
+ensure_apt_packages wget
+wget -O steam.deb https://cdn.akamai.steamstatic.com/client/installer/steam.deb
 sudo dpkg -i steam.deb
 
-popd
+popd >/dev/null

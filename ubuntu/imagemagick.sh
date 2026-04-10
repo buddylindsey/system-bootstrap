@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "imagemagick"
-if [ $? -eq 0 ]; then
+if ! prepare_install "$MODE_PRESENT" "magick" "ImageMagick"; then
     exit 0
 fi
 
-sudo apt install -y imagemagick
+sudo apt-get install -y imagemagick

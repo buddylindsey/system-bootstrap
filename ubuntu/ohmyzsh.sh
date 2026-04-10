@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "omz"
-if [ $? -eq 0 ]; then
+if [ -d "$HOME/.oh-my-zsh" ]; then
+    log_step "Oh My Zsh already installed; skipping"
     exit 0
 fi
 
-pushd /tmp
-
-sudo apt install -y zsh
+log_step "Installing Oh My Zsh"
+pushd /tmp >/dev/null
+sudo apt-get install -y zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-popd
+popd >/dev/null

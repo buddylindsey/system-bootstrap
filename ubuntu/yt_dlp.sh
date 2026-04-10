@@ -1,27 +1,26 @@
 #!/bin/bash
 
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/../utils.sh"
+
+prepare_install "$MODE_LATEST" "yt-dlp" "yt-dlp"
+
 sudo apt remove -y yt-dlp
 sudo apt remove -y --autoremove
 
+pushd /tmp >/dev/null
 
-VERBOSE="${VERBOSE:-no}"
+REPO="yt-dlp/yt-dlp"
+APP_VERSION=$(github_latest_release_tag "$REPO")
 
-pushd /tmp
-
-REPO='yt-dlp/yt-dlp'
-APP_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
-ARCHIVE_FILE='yt-dlp'
-DOWNLOAD_ARCHIVE='yt-dlp_linux'
-APP_DIR='/usr/local/bin'
-EXTRACT_LOCATION='yt-dlp'
-
-if [[ $VERBOSE == "yes" ]]; then
-    echo "REPO: $REPO"
-    echo "VERSION: $APP_VERSION"
+if [[ ${VERBOSE:-no} == "yes" ]]; then
+    log_step "REPO: $REPO"
+    log_step "VERSION: $APP_VERSION"
 fi
 
-curl -sLo $ARCHIVE_FILE https://github.com/$REPO/releases/download/$APP_VERSION/$DOWNLOAD_ARCHIVE
-chmod +x $ARCHIVE_FILE
-sudo install $EXTRACT_LOCATION $APP_DIR 
-popd
-
+curl -fsSLo yt-dlp "https://github.com/$REPO/releases/download/$APP_VERSION/yt-dlp_linux"
+chmod +x yt-dlp
+sudo install yt-dlp /usr/local/bin
+popd >/dev/null

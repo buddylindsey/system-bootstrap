@@ -13,6 +13,36 @@ If you want to take inspiration from it and creat your own then cool, I might us
 
 Ultimately, I want this to evolve over the next 10 years to get better and better so when startup a new system I can run this and within 30 minutes everything is mostly how I want it.
 
+## Usage
+
+Run a full manifest:
+
+```bash
+./install.sh --env cli
+./install.sh --env gui
+```
+
+Run specific targets only:
+
+```bash
+./install.sh docker awscli
+./install.sh docker kind
+./install.sh tailscale nvim
+./install.sh telegram
+```
+
+List available targets:
+
+```bash
+./install.sh --list
+```
+
+Validate shell syntax:
+
+```bash
+./install.sh --validate
+```
+
 ## Package Manager vs not
 
 One of the things about this setup is I am choosing the apps I want to update via package manager or manually. For most of my command line applications I am chooseing to programatically get the latest version and force an update and not rely on a repository. For other things I am relying on the apt repository in ubuntu.

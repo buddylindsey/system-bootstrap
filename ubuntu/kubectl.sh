@@ -1,12 +1,13 @@
 #!/bin/bash
 
-VERBOSE="${VERBOSE:-no}"
+set -euo pipefail
 
-pushd /tmp
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/../utils.sh"
 
-APP_DIR='/usr/local/bin'
+prepare_install "$MODE_LATEST" "kubectl" "kubectl"
 
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl $APP_DIR
-
-popd
+pushd /tmp >/dev/null
+curl -fsSLO "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin
+popd >/dev/null

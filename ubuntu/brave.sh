@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "brave-browser"
-if [ $? -eq 0 ]; then
+if ! prepare_install "$MODE_PRESENT" "brave-browser" "Brave"; then
     exit 0
 fi
 
-sudo apt install -y curl
+ensure_apt_packages curl
 
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 
@@ -18,4 +18,3 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] http
 sudo apt update
 
 sudo apt install -y brave-browser
-

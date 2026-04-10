@@ -1,17 +1,14 @@
 #!/bin/bash
 
-# Source utils in parent directory
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "tailscale"
-if [ $? -eq 0 ]; then
+if ! prepare_install "$MODE_PRESENT" "tailscale" "Tailscale"; then
     exit 0
 fi
 
-pushd /tmp
-echo "Installing Tailscale"
-
+pushd /tmp >/dev/null
 curl -fsSL https://tailscale.com/install.sh | sh
-
-popd
+popd >/dev/null

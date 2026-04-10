@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-pushd /tmp
-check_command_installed "starship"
-if [ $? -eq 0 ]; then
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
-else
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
-    echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-fi
-popd
+prepare_install "$MODE_LATEST" "starship" "starship"
+
+pushd /tmp >/dev/null
+curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+popd >/dev/null
+
+append_line_once 'eval "$(starship init zsh)"' "$HOME/.zshrc"

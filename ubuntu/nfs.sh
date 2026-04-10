@@ -1,3 +1,5 @@
 #!/bin/bash
 
-sudo apt install -y nfs-common
+set -euo pipefail
+
+sudo apt-get install -y nfs-common

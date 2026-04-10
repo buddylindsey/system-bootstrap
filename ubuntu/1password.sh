@@ -1,18 +1,16 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "1password"
-if [ $? -eq 0 ]; then
-    exit 0
-fi
+log_step "Installing latest 1Password"
 
-pushd /tmp
+pushd /tmp >/dev/null
 
-sudo apt install -y gnupg2 wget
-wget https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+ensure_apt_packages gnupg2 wget
+wget -O 1password-latest.deb https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
 sudo dpkg -i 1password-latest.deb
 
-popd
+popd >/dev/null

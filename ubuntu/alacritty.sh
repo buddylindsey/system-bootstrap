@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "alacritty"
-if [ $? -eq 0 ]; then
+if ! prepare_install "$MODE_PRESENT" "alacritty" "Alacritty"; then
     exit 0
 fi
 
-sudo apt install -y alacritty
+sudo apt-get install -y alacritty

@@ -1,18 +1,23 @@
 #!/bin/bash
 
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/../utils.sh"
+
 # Check if `ca-certificates` and `curl` are installed
 if dpkg -l | grep -q "ca-certificates"; then
     echo "ca-certificates is already installed."
 else
     echo "Installing ca-certificates..."
-    sudo apt-get install -y ca-certificates
+    ensure_apt_packages ca-certificates
 fi
 
 if dpkg -l | grep -q "curl"; then
     echo "curl is already installed."
 else
     echo "Installing curl..."
-    sudo apt-get install -y curl
+    ensure_apt_packages curl
 fi
 
 # Check if the Docker GPG key is already installed
@@ -39,14 +44,14 @@ fi
 sudo apt-get update
 
 # Install Docker if it is not already installed
-if ! docker --version &> /dev/null; then
+if ! command_exists docker; then
     echo "Installing Docker..."
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ensure_apt_packages docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 else
     echo "Docker is already installed."
 fi
 
-if groups $USER | grep -q "\bdocker\b"; then
+if groups "$USER" | grep -q "\bdocker\b"; then
     echo "User $USER is already in the docker group."
 else
     echo "Adding user $USER to the docker group..."

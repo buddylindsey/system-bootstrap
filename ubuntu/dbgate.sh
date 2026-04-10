@@ -1,22 +1,19 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-check_command_installed "wget"
-if [ $? -eq 1 ]; then
-    sudo apt install -y wget
+log_step "Installing latest DbGate"
+
+if ! command_exists wget; then
+    ensure_apt_packages wget
 fi
 
-check_command_installed "dbgate"
-if [ $? -eq 0 ]; then
-    exit 0
-fi
+pushd /tmp >/dev/null
 
-pushd /tmp
-
-wget https://github.com/dbgate/dbgate/releases/latest/download/dbgate-latest.deb
+wget -O dbgate-latest.deb https://github.com/dbgate/dbgate/releases/latest/download/dbgate-latest.deb
 sudo dpkg -i dbgate-latest.deb
 
-popd
+popd >/dev/null

@@ -1,39 +1,33 @@
 #!/bin/bash
 
-# Source utils in parent
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../utils.sh"
 
-REPO='wb2osz/direwolf'
-APP_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
+prepare_install "$MODE_LATEST" "direwolf" "Dire Wolf"
 
-UPGRADE="no"
-
-check_command_installed "direwolf"
-if [ $? -eq 0 ]; then
-    $UPGRADE="yes"
-    exit 0
+upgrade_mode="no"
+if command_exists direwolf; then
+    upgrade_mode="yes"
 fi
 
-sudo apt-get install -y libasound2-dev build-essential cmake git gpsd libgps-dev gcc g++ make cmake libasound2-dev libudev-dev libavahi-client-dev socat
+sudo apt-get install -y libasound2-dev build-essential cmake git gpsd libgps-dev gcc g++ make libudev-dev libavahi-client-dev socat
 
-pushd /tmp
+pushd /tmp >/dev/null
 
-if [ -d "direwolf" ]; then
-    rm -rf direwolf
-fi
-
+rm -rf direwolf
 git clone https://www.github.com/wb2osz/direwolf
 
 cd direwolf
-
-mkdir build && cd build
+mkdir build
+cd build
 cmake ..
 make -j4
 sudo make install
 
-if [[ $UPGRADE == "no" ]]; then
+if [[ $upgrade_mode == "no" ]]; then
     make install-conf
 fi
 
-popd
+popd >/dev/null
