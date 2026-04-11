@@ -7,6 +7,22 @@ source "$SCRIPT_DIR/../utils.sh"
 
 prepare_install "$MODE_LATEST" "asdf" "asdf"
 
+ensure_asdf_language_installed() {
+    local plugin_name=$1
+
+    if ! asdf plugin list | grep -qx "$plugin_name"; then
+        asdf plugin add "$plugin_name"
+    fi
+
+    if asdf list "$plugin_name" >/dev/null 2>&1; then
+        log_step "asdf $plugin_name already has an installed version; skipping latest install"
+        return 1
+    fi
+
+    asdf install "$plugin_name" latest
+    return 0
+}
+
 case "$(uname -m)" in
     x86_64)
         asdf_arch="amd64"
@@ -36,17 +52,12 @@ tar -xzf "$ARCHIVE_FILE"
 sudo install asdf /usr/local/bin
 popd >/dev/null
 
-if ! asdf plugin list | grep -qx "python"; then
-    asdf plugin add python
+if ensure_asdf_language_installed "python"; then
+    asdf global python latest
 fi
-asdf install python latest
-asdf global python latest
-if ! asdf plugin list | grep -qx "nodejs"; then
-    asdf plugin add nodejs
+
+if ensure_asdf_language_installed "nodejs"; then
+    asdf global nodejs latest
 fi
-asdf install nodejs latest
-asdf global nodejs latest
-if ! asdf plugin list | grep -qx "golang"; then
-    asdf plugin add golang
-fi
-asdf install golang latest
+
+ensure_asdf_language_installed "golang" || true
