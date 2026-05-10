@@ -60,6 +60,23 @@ ensure_apt_packages() {
     sudo apt-get install -y "$@"
 }
 
+ensure_ppa() {
+    local ppa=$1
+
+    ensure_apt_packages software-properties-common
+    log_step "Ensuring PPA: $ppa"
+
+    sudo add-apt-repository -y -n "$ppa"
+    if sudo apt-get update; then
+        return 0
+    fi
+
+    log_step "PPA failed apt update; removing: $ppa"
+    sudo add-apt-repository -y -r -n "$ppa" || true
+    sudo apt-get update
+    return 1
+}
+
 github_latest_release_tag() {
     local repo=$1
     curl -fsSL "https://api.github.com/repos/$repo/releases/latest" | grep -Po '"tag_name": "\K[^"]*'

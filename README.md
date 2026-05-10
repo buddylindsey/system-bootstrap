@@ -43,6 +43,20 @@ Validate shell syntax:
 ./install.sh --validate
 ```
 
+## Pop!_OS release upgrades
+
+Pop!_OS release upgrades disable or remove third-party repositories for upgrade reliability. After upgrading, update the base system first, then rerun the bootstrap targets that own third-party sources or local package installs:
+
+```bash
+sudo apt update
+sudo apt full-upgrade
+./install.sh --validate
+./install.sh docker brave tailscale nvim obs kdenlive freecad
+./install.sh 1password dbgate steam ghostty
+```
+
+The PPA-backed scripts re-add their PPA before deciding whether the app is already installed. If a PPA does not support the new Ubuntu base, the script removes that PPA again instead of leaving apt pointed at a broken source.
+
 ## Package Manager vs not
 
 One of the things about this setup is I am choosing the apps I want to update via package manager or manually. For most of my command line applications I am chooseing to programatically get the latest version and force an update and not rely on a repository. For other things I am relying on the apt repository in ubuntu.

@@ -202,7 +202,7 @@ if [[ $help_only == "yes" ]]; then
 fi
 
 if [[ $validate_only == "yes" ]]; then
-    "$SCRIPT_DIR/validate.sh"
+    bash "$SCRIPT_DIR/validate.sh"
     exit 0
 fi
 
