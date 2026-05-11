@@ -16,5 +16,14 @@ if ! asdf plugin list | grep -qx "awscli"; then
     asdf plugin add awscli
 fi
 
-asdf install awscli latest
-asdf global awscli latest
+AWSCLI_VERSION=$(asdf latest awscli)
+
+asdf install awscli "$AWSCLI_VERSION"
+
+if asdf set --help >/dev/null 2>&1; then
+    asdf set --home awscli "$AWSCLI_VERSION"
+else
+    asdf global awscli "$AWSCLI_VERSION"
+fi
+
+asdf reshim awscli
