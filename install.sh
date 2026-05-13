@@ -51,6 +51,7 @@ UBUNTU_GUI_SCRIPTS=(
     dbgate.sh
     minimodem.sh
     telegram.sh
+    signal.sh
 )
 
 UBUNTU_OPTIONAL_SCRIPTS=(
